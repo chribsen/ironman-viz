@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from scraper.database import Base
 
+
 class Athlete(Base):
     __tablename__ = 'athletes'
     id = Column(Integer, primary_key=True)
@@ -14,10 +15,16 @@ class Athlete(Base):
     run_time = Column(Integer)
     finish_time = Column(Integer)
     points = Column(Integer)
+    age = Column(Integer)
+    division = Column(String(40))
+    state = Column(String(40))
+    bib_id = Column(Integer)
+    profession = Column(String(120))
 
     def __init__(self, name=None, country=None, div_rank=None, gender_rank=None,
                  overall_rank=None, swim_time=None, bike_time=None, run_time=None,
-                 finish_time=None, points=None):
+                 finish_time=None, points=None, age=None, division=None,
+                 state=None, bib_id=None, profession=None):
         self.name = self.__rearrange_name__(name)
         self.country = country
         self.div_rank = int(div_rank)
@@ -28,6 +35,13 @@ class Athlete(Base):
         self.run_time = self.__reformat_time__(run_time)
         self.finish_time = self.__reformat_time__(finish_time)
         self.points = int(points)
+        self.age = int(age)
+        self.division = division
+        self.state = state
+        self.bib_id = int(bib_id)
+
+        # If the data is just like '---', then make a proper null entry
+        self.profession = profession if profession != '---' else None
 
     def __rearrange_name__(self, name):
         """
