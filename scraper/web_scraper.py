@@ -8,8 +8,8 @@ from scraper.models import Athlete
 class IronManScraper:
 
     def __init__(self):
-        self.base_url = 'http://eu.ironman.com'
-        self.endpoint = '/triathlon/events/emea/ironman/copenhagen/results.aspx?p={page}&ps=20#axzz4Iia1G5jw'
+        self.base_url = 'http://eu.ironman.com/triathlon/events/emea/ironman/copenhagen/results.aspx'
+        self.endpoint = '?p={page}&ps=20#axzz4Iia1G5jw'
         self.get_endpoint = lambda page_number: self.base_url + self.endpoint.format(page=page_number)
         self.atheletes = []
         self.invalid_athlete_count = 0
@@ -22,11 +22,21 @@ class IronManScraper:
 
         return self.atheletes
 
+    def __get_profile__(self, endpoint):
+        r = requests.get(self.base_url + endpoint)
+        return r.text
+
     def __parse_html__(self, html):
         rows = BeautifulSoup(html) \
             .find('table', {'class': 'tablesorter'}) \
             .find('tbody') \
             .find_all('tr')
+
+        endpoint = rows[0].find_all('a')[0]['href']
+        profile_html = BeautifulSoup(self.__get_profile__(endpoint))
+
+        profile_data = [td.text for td in profile_html.find_all('table', {'id': 'general-info'})[0].find_all('td')]
+
 
         for row in rows:
             column_data = [ele.text.strip() for ele in row.find_all('td')]
@@ -42,7 +52,11 @@ class IronManScraper:
                     bike_time=column_data[6],
                     run_time=column_data[7],
                     finish_time=column_data[8],
-                    points=column_data[9]
+                    points=column_data[9],
+                    bib_id=profile_data[2],
+                    age=profile_data[6],
+                    state=profile_data[8],
+                    profession=profile_data[12]
                 )
                 db_session.add(athlete)
                 db_session.commit()
@@ -60,11 +74,12 @@ class IronManScraperTest(unittest.TestCase):
         init_db()
         scraper = IronManScraper()
         scraper.get_athletes()
+        db_session.remove()
 
     def test_get_data(self):
         print(Athlete.query.all())
         self.assertIsNotNone(Athlete.query.all())
 
-        print(Athlete.query.filter(Athlete.name == 'Mark Johnston').first())
+        print(Athlete.query.filter(Athlete.name == 'Mark Johnston').first().age)
         self.assertIsNotNone(Athlete.query.filter(Athlete.name == 'Mark Johnston').first())
 
