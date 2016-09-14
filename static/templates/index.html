@@ -295,15 +295,44 @@
 
 
         <div class="row">
-
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <i class="fa fa-bar-chart-o fa-fw"></i> Average results by country
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Attendance by country
                     </div>
                     <!-- /.panel-heading -->
-                    <div class="panel-body" ng-controller="AverageResultGenderController">
+                    <div class="panel-body" ng-controller="AttendanceByCountryController">
                         <nvd3 options="options" data="data"></nvd3>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Attendance by age
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body" ng-controller="AttendanceByAgeController">
+                        <nvd3 options="options" data="data"></nvd3>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Gradientboosting + Elasticsearch
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body" ng-controller="SearchController">
+                        <input type="text" my-on-key-down-call="callRestService()">
                     </div>
                     <!-- /.panel-body -->
                 </div>
