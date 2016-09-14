@@ -12,10 +12,19 @@ class AgePredictor:
     def __init__(self):
         self.X = []
         self.y = []
+        self.all_athletes = []
+
+    def get_X_vals(self, athletes):
+        for each in athletes:
+            yield [each.div_rank,each.gender_rank,each.overall_rank,each.swim_time,
+                      each.bike_time,each.run_time,each.finish_time,each.points]
+
+
 
     def get_data(self):
 
         for each in Athlete.query.all():
+            self.all_athletes.append(each)
             self.X.append([each.div_rank,each.gender_rank,each.overall_rank,each.swim_time,
                       each.bike_time,each.run_time,each.finish_time,each.points])
 
@@ -44,21 +53,33 @@ class AgePredictor:
 
             print(str(i))
 
-        f = open('training-results.json', 'w+')
+        f = open('training-results-age.json', 'w+')
         f.write(json.dumps(results, indent=2))
         f.close()
 
     def train(self):
-        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.2, random_state=0)
+        train_athlete, test_athlete, y_train, y_test = train_test_split(self.all_athletes, self.y, train_size=0.4, random_state=0)
+
+        X_train = list(self.get_X_vals(train_athlete))
+        X_test = list(self.get_X_vals(test_athlete))
+
 
         self.cls = GradientBoostingRegressor(n_estimators=17)
         self.cls = self.cls.fit(X_train, y_train)
 
-        for x, y in zip(X_test, y_test):
+        data_to_write = []
+        for (x, y, z) in zip(X_test, y_test, test_athlete):
             y_pred = self.cls.predict([x])
-            print('pred: {0} - true: {1}'.format(str(y_pred), str(y)))
 
+            json_obj = z.as_dict()
 
+            json_obj['predicted_age'] = y_pred[0]
+            json_obj['residual'] = float(y) - float(y_pred[0])
+
+            data_to_write.append(json_obj)
+
+        with open('predicted.json', 'w') as outfile:
+            json.dump(data_to_write, outfile)
 
 
 class ResultPredictor:
@@ -101,8 +122,7 @@ class ResultPredictor:
                 print(key)
                 print(results[key][x])
 
-
-        f = open('training-results.json', 'w+')
+        f = open('training-results-results.json', 'w+')
         f.write(json.dumps(results, indent=2))
         f.close()
 
@@ -117,7 +137,7 @@ class ResultPredictor:
             print('pred: {0} - true: {1}'.format(str(y_pred), str(y)))
 
 
-a = ResultPredictor()
+a = AgePredictor()
 a.get_data()
 a.cross_validation()
 #a.train()
