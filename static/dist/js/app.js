@@ -19,7 +19,6 @@ app.factory('AthleteService', function ($http) {
 app.controller("TimeDistributionController", function ($scope, $http, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
-        console.log(response.athletes);
 
         var counts = {};
         response.athletes.forEach(function (athlete) {
@@ -298,7 +297,7 @@ app.controller('SwimRunBikeConnectionsController', function ($scope, AthleteServ
 
 });
 
-app.controller('AverageResultGenderController', function ($scope, AthleteService) {
+app.controller('AttendanceByCountryController', function ($scope, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
 
@@ -360,6 +359,73 @@ app.controller('AverageResultGenderController', function ($scope, AthleteService
 
 });
 
+app.controller("AttendanceByAgeController", function ($scope, $http, AthleteService) {
+
+    AthleteService.getEvent().success(function (response) {
+
+        var counts = {};
+
+        response.athletes.forEach(function (athlete) {
+            if (counts[athlete.age] == undefined) {
+                counts[athlete.age] = 1;
+            } else {
+                counts[athlete.age]++;
+            }
+        });
+
+        var data = [];
+
+        for (var key in counts) {
+
+            data.push({
+                label: key,
+                value: counts[key]
+            })
+        }
+
+        $scope.data = [
+            {
+                key: 'Series1',
+                color: 'red',
+                values: _.sortBy(data, 'label')
+            }
+        ]
+    });
+
+    $scope.options = {
+        chart: {
+            showControls: false,
+            type: 'multiBarChart',
+            height: 450,
+            margin: {
+                top: 20,
+                right: 20,
+                bottom: 50,
+                left: 55
+            },
+            x: function (d) {
+                return d.label;
+            },
+            y: function (d) {
+                return d.value;
+            },
+            showValues: true,
+            valueFormat: function (d) {
+                return d3.format('d')(d);
+            },
+            duration: 500,
+            xAxis: {
+                axisLabel: 'Age',
+                rotateLabels: -35
+            },
+            yAxis: {
+                axisLabel: 'Number of attendees',
+                axisLabelDistance: -10
+            }
+        }
+    };
+});
+
 
 app.controller('TimeTablesController', function ($scope, AthleteService) {
 
@@ -378,8 +444,26 @@ app.controller('TimeTablesController', function ($scope, AthleteService) {
             .slice(response.athletes.length - 5, response.athletes.length);
 
     });
-
-
-
-
 });
+
+app.directive('myOnKeyDownCall', function () {
+    return function ($scope, element) {
+        element.bind("keyup", function (event) {
+          var val = element.val();
+          if(val.length > 2) {
+            $scope.search(val);
+          }
+        });
+    };
+});
+
+
+app.controller('SearchController', function ($scope, $http) {
+
+    $scope.search = function () {
+        $http({method: 'GET', url: '/search'}).success(function (data, status, headers, config) {
+           console.log(data);
+        })
+    }
+});
+
