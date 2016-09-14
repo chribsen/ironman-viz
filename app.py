@@ -23,6 +23,11 @@ def athletes():
     athletes = [athlete.as_dict(exclude=exclude) for athlete in Athlete.query.order_by(asc(Athlete.overall_rank)).all()]
     return jsonify(dict(athletes=athletes))
 
+@app.route('/search')
+def search_athletes():
+    return jsonify(dict(result='abc'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
