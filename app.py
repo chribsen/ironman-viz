@@ -2,8 +2,10 @@ from flask import Flask, jsonify, request
 from sqlalchemy import asc, desc
 from scraper.database import db_session
 from scraper.models import Athlete
+from flask.ext.elasticsearch import FlaskElasticsearch
 
 app = Flask(__name__, static_url_path='')
+es = FlaskElasticsearch(app)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -25,7 +27,9 @@ def athletes():
 
 @app.route('/search')
 def search_athletes():
-    return jsonify(dict(result='abc'))
+    q = request.args.get('q')
+    es.search({ "query": { "match_phrase_prefix": { "name": q}}}, index='athletes')
+    return jsonify(dict(result=q))
 
 
 if __name__ == '__main__':
