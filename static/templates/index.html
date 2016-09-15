@@ -332,7 +332,36 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="SearchController">
-                        <input type="text" ng-model="searchText" my-on-key-down-call="callRestService()">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <input type="text" ng-model="searchText" my-on-key-down-call="callRestService()">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Country</th>
+                                        <th>Overall rank</th>
+                                        <th>Age</th>
+                                        <th>Pred. age</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="success" ng-repeat="hit in hits">
+                                        <td>{{ hit._source.name }}</td>
+                                        <td>{{ hit._source.country }}</td>
+                                        <td>{{ hit._source.overall_rank }}</td>
+                                        <td> {{ hit._source.age }}</td>
+                                        <td> {{ hit._source.predicted_age }}</td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <!-- /.panel-body -->
                 </div>

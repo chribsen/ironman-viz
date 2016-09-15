@@ -463,8 +463,8 @@ app.controller('SearchController', function ($scope, $http) {
     $scope.search = function () {
         $http({method: 'GET',
             params: {q: $scope.searchText},
-            url: '/search'}).success(function (data, status, headers, config) {
-           console.log(data);
+            url: 'http://ironman.graflr.co/search'}).success(function (data, status, headers, config) {
+            $scope.hits = data.hits;
         })
     }
 });
