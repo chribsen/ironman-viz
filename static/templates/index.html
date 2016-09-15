@@ -350,9 +350,9 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr class="success" ng-repeat="hit in hits">
+                                    <tr ng-repeat="hit in results">
                                         <td>{{ hit._source.name }}</td>
-                                        <td>{{ hit._source.country }}</td>
+                                        <td>{{ hit }}</td>
                                         <td>{{ hit._source.overall_rank }}</td>
                                         <td> {{ hit._source.age }}</td>
                                         <td> {{ hit._source.predicted_age }}</td>
