@@ -23,6 +23,10 @@
     <!-- NVD3 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.4/nv.d3.min.css" rel="stylesheet" type="text/css">
 
+    <!-- Font awesome (for spinners) -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+
+
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -116,6 +120,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -141,6 +146,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -166,6 +172,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -191,6 +198,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <table class="table table-condensed">
                             <thead>
                             <tr>
@@ -219,7 +227,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="TimeDistributionController">
-
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -235,6 +243,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="BikeVsRunController">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -247,6 +256,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="SwimVsRunController">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -259,6 +269,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="BikeVsSwimController">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -274,6 +285,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="dataBest"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -286,6 +298,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="dataWorst"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -302,6 +315,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="AttendanceByCountryController">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -317,6 +331,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="AttendanceByAgeController">
+                        <div loading-spinner></div>
                         <nvd3 options="options" data="data"></nvd3>
                     </div>
                     <!-- /.panel-body -->
@@ -334,7 +349,24 @@
                     <div class="panel-body" ng-controller="SearchController">
                         <div class="row">
                             <div class="col-lg-12">
-                                <input type="text" ng-model="searchText" my-on-key-down-call="callRestService()">
+
+                                <div class="alert alert-info" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Info:</span>
+                                    This search engine queries attendees by name and shows their predicted age, given
+                                    various parameters. A gradient boosting regressor has been initialized with
+                                    n_estimators=17 which minimizes the LS cost function to -0.1679 (the average least
+                                    squares taken from a 7-fold cross validation). <br>
+                                    To display the results nicely, elasticsearch is used for providing near real-time
+                                    search-as-you-type querying. This index only uses built-in match_phrase_prefix at
+                                    the moment.
+                                </div>
+
+                                <div class="input-group">
+                                    <input id="basic-url" style="width:100%" placeholder="Search for..." class="form-control" aria-label="..." type="text"
+                                           ng-model="searchText" my-on-key-down-call="callRestService()">
+
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -345,8 +377,13 @@
                                         <th>Name</th>
                                         <th>Country</th>
                                         <th>Overall rank</th>
+                                        <th>Finish time</th>
+                                        <th>Bike time</th>
+                                        <th>Run time</th>
+                                        <th>Swim time</th>
                                         <th>Age</th>
                                         <th>Pred. age</th>
+                                        <th>Residual</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -354,8 +391,13 @@
                                         <td>{{ hit._source.name }}</td>
                                         <td>{{ hit._source.country }}</td>
                                         <td>{{ hit._source.overall_rank }}</td>
+                                        <td>{{hit._source.finish_time}}</td>
+                                        <td>{{hit._source.bike_time}}</td>
+                                        <td>{{hit._source.run_time}}</td>
+                                        <td>{{hit._source.swim_time}}</td>
                                         <td> {{ hit._source.age }}</td>
                                         <td> {{ hit._source.predicted_age }}</td>
+                                        <td> {{hit._source.residual}}</td>
                                     </tr>
 
                                     </tbody>

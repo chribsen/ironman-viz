@@ -19,6 +19,7 @@ app.factory('AthleteService', function ($http) {
 app.controller("TimeDistributionController", function ($scope, $http, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
+        $scope.chartLoaded = true;
 
         var counts = {};
         response.athletes.forEach(function (athlete) {
@@ -77,6 +78,8 @@ app.controller("TimeDistributionController", function ($scope, $http, AthleteSer
 app.controller("BikeVsSwimController", function ($scope, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
+        $scope.chartLoaded = true;
+
         var data = [];
         response.athletes.forEach(function (athlete) {
             data.push(
@@ -141,6 +144,8 @@ app.controller("BikeVsSwimController", function ($scope, AthleteService) {
 app.controller("SwimVsRunController", function ($scope, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
+        $scope.chartLoaded = true;
+
         var data = [];
         response.athletes.forEach(function (athlete) {
             data.push(
@@ -205,6 +210,8 @@ app.controller("SwimVsRunController", function ($scope, AthleteService) {
 app.controller("BikeVsRunController", function ($scope, $http, AthleteService) {
 
     AthleteService.getEvent().success(function (response) {
+        $scope.chartLoaded = true;
+
         var data = [];
         response.athletes.forEach(function (athlete) {
             data.push(
@@ -271,6 +278,8 @@ app.controller('SwimRunBikeConnectionsController', function ($scope, AthleteServ
     AthleteService.getEvent().success(function (response) {
         $scope.dataBest = response.athletes.slice(0, 99);
         $scope.dataWorst = response.athletes.slice(response.athletes.length - 100, response.athletes.length)
+
+        $scope.chartLoaded = true;
     });
 
     $scope.options = {
@@ -327,7 +336,9 @@ app.controller('AttendanceByCountryController', function ($scope, AthleteService
                 color: 'blue',
                 values: _.sortBy(data, 'value').reverse()
             }
-        ]
+        ];
+        $scope.chartLoaded = true;
+
     });
 
     $scope.options = {
@@ -386,10 +397,12 @@ app.controller("AttendanceByAgeController", function ($scope, $http, AthleteServ
         $scope.data = [
             {
                 key: 'Series1',
-                color: 'red',
+                color: '#1ab394',
                 values: _.sortBy(data, 'label')
             }
-        ]
+        ];
+
+        $scope.chartLoaded = true;
     });
 
     $scope.options = {
@@ -443,27 +456,37 @@ app.controller('TimeTablesController', function ($scope, AthleteService) {
         $scope.topRunners = _.sortBy(response.athletes, 'run_time')
             .slice(response.athletes.length - 5, response.athletes.length);
 
+        $scope.chartLoaded = true;
+
     });
 });
 
 app.directive('myOnKeyDownCall', function () {
     return function ($scope, element) {
         element.bind("keyup", function (event) {
-          var val = element.val();
-          if(val.length > 2) {
-            $scope.search(val);
-          }
+            var val = element.val();
+            if (val.length > 2) {
+                $scope.search(val);
+            }
         });
     };
+});
+
+app.directive('loadingSpinner', function () {
+    return {
+        template: '<div class="row" style="text-align: center;"><div class="span12"><i  ng-hide="chartLoaded" class="text-center fa fa-circle-o-notch fa-spin" style="font-size:24px"></i></div></div>',
+    }
 });
 
 
 app.controller('SearchController', function ($scope, $http) {
 
     $scope.search = function () {
-        $http({method: 'GET',
+        $http({
+            method: 'GET',
             params: {q: $scope.searchText},
-            url: 'http://ironman.graflr.co/search'}).success(function (data) {
+            url: 'http://ironman.graflr.co/search'
+        }).success(function (data) {
             $scope.results = data.hits;
         })
     }
