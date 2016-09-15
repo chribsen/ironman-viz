@@ -332,7 +332,7 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body" ng-controller="SearchController">
-                        <input type="text" my-on-key-down-call="callRestService()">
+                        <input type="text" ng-model="searchText" my-on-key-down-call="callRestService()">
                     </div>
                     <!-- /.panel-body -->
                 </div>

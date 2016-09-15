@@ -461,7 +461,9 @@ app.directive('myOnKeyDownCall', function () {
 app.controller('SearchController', function ($scope, $http) {
 
     $scope.search = function () {
-        $http({method: 'GET', url: '/search'}).success(function (data, status, headers, config) {
+        $http({method: 'GET',
+            params: {q: $scope.searchText},
+            url: '/search'}).success(function (data, status, headers, config) {
            console.log(data);
         })
     }
