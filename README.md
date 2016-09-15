@@ -89,3 +89,7 @@ This excludes the properties `bike_time`, `swim_time`, `points` and `finish_time
   ]
 }  
 ```
+
+## Web app: How to use
+
+The web application requires that elasticsearch is installed. When elasticsearch is up and running on localhost port `:9200`, change the path in `scraper/database.py` (it's absolute at the moment), make sure all pip dependencies are right and hit `python3 app.py`.
