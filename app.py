@@ -30,7 +30,7 @@ def search_athletes():
     q = request.args.get('q')
 
     if q:
-        return jsonify(es.search({ "query": { "match_phrase_prefix": { "name": q}}}, index='athletes'))
+        return jsonify(es.search({ "query": { "match_phrase_prefix": { "name": q}}}, index='athletes')['hits'])
     return jsonify(dict(result=None))
 
 
