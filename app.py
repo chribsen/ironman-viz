@@ -2,10 +2,10 @@ from flask import Flask, jsonify, request
 from sqlalchemy import asc, desc
 from scraper.database import db_session
 from scraper.models import Athlete
-from flask.ext.elasticsearch import FlaskElasticsearch
+from pyelasticsearch import ElasticSearch
 
 app = Flask(__name__, static_url_path='')
-es = FlaskElasticsearch(app)
+es = ElasticSearch('http://localhost:9200/')
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
