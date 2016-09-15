@@ -28,8 +28,10 @@ def athletes():
 @app.route('/search')
 def search_athletes():
     q = request.args.get('q')
-    es.search({ "query": { "match_phrase_prefix": { "name": q}}}, index='athletes')
-    return jsonify(dict(result=q))
+
+    if q:
+        return jsonify(es.search({ "query": { "match_phrase_prefix": { "name": q}}}, index='athletes'))
+    return jsonify(dict(result=None))
 
 
 if __name__ == '__main__':
